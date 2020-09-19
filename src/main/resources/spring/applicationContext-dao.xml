@@ -26,6 +26,8 @@
 		<property name="maxActive" value="300" />
 		<!-- 最大等待连接中的数量 -->
 		<property name="maxIdle" value="50" />
+		<property name="maxWait" value="60000" />
+		<property name="validationQuery" value="select * from dual" />
 	</bean>
 
 	<!-- sqlSessionFactory -->
