@@ -2,6 +2,7 @@ package cn.edu.zju.gislab.SCSServices.service.impl;
 
 import cn.edu.zju.gislab.SCSServices.mapper.TyphInfoMapper;
 import cn.edu.zju.gislab.SCSServices.mapper.TyphMonitorMapper;
+import cn.edu.zju.gislab.SCSServices.mapper.TyphMonitorWebMapper;
 import cn.edu.zju.gislab.SCSServices.po.*;
 import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
     private TyphInfoMapper typhInfoMapper;
 
     @Autowired
-    private TyphMonitorMapper typhMonitorMapper;
+    private TyphMonitorWebMapper typhMonitorWebMapper;
 
     // 获取特定年份的所有台风
     @Override
@@ -32,8 +33,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             } else {
                 return null;
             }
-        }
-        catch(Error e) {
+        } catch (Error e) {
             return null;
         }
         return result;
@@ -48,14 +48,12 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             TyphInfoExample.Criteria criteria = typhInfoExample.createCriteria();
             criteria.andIsongoingEqualTo("1");
             List<TyphInfo> typhInfoList = typhInfoMapper.selectByExample(typhInfoExample);
-            if(typhInfoList.size() > 0) {
+            if (typhInfoList.size() > 0) {
                 result = typhInfoList.get(0);
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch (Error e) {
+        } catch (Error e) {
             return null;
         }
         return result;
@@ -84,8 +82,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             } else {
                 return null;
             }
-        }
-        catch(Error e) {
+        } catch (Error e) {
             return null;
         }
         return result;
@@ -93,25 +90,19 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
     // 获取Ongoing或所选择的台风的行进路线
     @Override
-    public List<TyphMonitor> getTyphoonRoute(long typhNum){
-        List<TyphMonitor> result;
+    public List<TyphMonitorWeb> getTyphoonRoute(long typhNum) {
+        List<TyphMonitorWeb> result;
         try {
-            TyphMonitorExample typhMonitorExample = new TyphMonitorExample();
-            TyphMonitorExample.Criteria criteria = typhMonitorExample.createCriteria();
+            TyphMonitorWebExample typhMonitorWebExample = new TyphMonitorWebExample();
+            TyphMonitorWebExample.Criteria criteria = typhMonitorWebExample.createCriteria();
             criteria.andTyphNumEqualTo(typhNum);
 
-            List<TyphMonitor> typhMonitorList = typhMonitorMapper.selectByExample(typhMonitorExample);
-
-            if(typhMonitorList.size() > 0){
-                result = typhMonitorList;
-            }
-            else{
-                return null;
-            }
-        }
-        catch (Error e) {
+            result = typhMonitorWebMapper.selectByExample(typhMonitorWebExample);
+            if (result.size() <= 0) result = null;
+        } catch (Error e) {
             return null;
         }
+
         return result;
     }
 
