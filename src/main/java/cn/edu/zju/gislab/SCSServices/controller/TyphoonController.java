@@ -3,6 +3,7 @@ package cn.edu.zju.gislab.SCSServices.controller;
 import cn.edu.zju.gislab.SCSServices.po.Tfybd;
 import cn.edu.zju.gislab.SCSServices.po.TyphInfo;
 import cn.edu.zju.gislab.SCSServices.po.TyphMonitor;
+import cn.edu.zju.gislab.SCSServices.po.TyphMonitorWeb;
 import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,8 +44,8 @@ public class TyphoonController {
 
     // 获取Ongoing或所选择的台风的行进路线
     @RequestMapping("/typhoonRoute")
-    public @ResponseBody List<TyphMonitor> queryTyphoonRoute( long typhNum ) {
-        List<TyphMonitor> result = typhoonInfoHome.getTyphoonRoute(typhNum);
+    public @ResponseBody List<TyphMonitorWeb> queryTyphoonRoute(long typhNum ) {
+        List<TyphMonitorWeb> result = typhoonInfoHome.getTyphoonRoute(typhNum);
         return result;
     }
 }
