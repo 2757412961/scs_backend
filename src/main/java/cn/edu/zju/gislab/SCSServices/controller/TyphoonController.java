@@ -27,14 +27,14 @@ public class TyphoonController {
         return result;
     }
 
-    // 获取正在进行的台风
+    // 获取现有台风的所有年份
     @RequestMapping("/typhoonYear")
     public @ResponseBody List<String> queryTyphoonYears() {
         List<String> result = typhoonInfoHome.getTyphoonYears();
         return result;
     }
 
-    // 获取现有台风的所有年份
+    // 获取正在进行的台风
     @RequestMapping("/typhoonOngoing")
     public @ResponseBody TyphInfo queryTyphoonOngoing() {
         TyphInfo result = typhoonInfoHome.getTyphoonOnGoing();
