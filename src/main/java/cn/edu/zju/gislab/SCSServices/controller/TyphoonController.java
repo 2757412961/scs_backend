@@ -48,4 +48,12 @@ public class TyphoonController {
         List<TyphMonitorWeb> result = typhoonInfoHome.getTyphoonRoute(typhNum);
         return result;
     }
+
+    // 获取特定年份的所有台风
+    @RequestMapping("/queryTyphoonInfo")
+    public @ResponseBody TyphInfo queryTyphoonInfo( long typhNum ) {
+        TyphInfo result = typhoonInfoHome.getTyphoonInfo( typhNum );
+        return result;
+    }
+
 }

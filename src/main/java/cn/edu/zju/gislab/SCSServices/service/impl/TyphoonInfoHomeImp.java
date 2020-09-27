@@ -106,4 +106,18 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
         return result;
     }
 
+    @Override
+    public TyphInfo getTyphoonInfo(long typhNum) {
+        TyphInfo result = null;
+
+        TyphInfoExample typhInfoExample = new TyphInfoExample();
+        TyphInfoExample.Criteria criteria = typhInfoExample.createCriteria();
+        criteria.andTyphNumEqualTo(typhNum);
+        List<TyphInfo> typhInfoList = typhInfoMapper.selectByExample(typhInfoExample);
+
+        if (typhInfoList.size() > 0) result = typhInfoList.get(0);
+
+        return result;
+    }
+
 }

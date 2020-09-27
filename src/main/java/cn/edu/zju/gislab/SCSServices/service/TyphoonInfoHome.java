@@ -10,4 +10,5 @@ public interface TyphoonInfoHome {
     TyphInfo getTyphoonOnGoing();
     List<String> getTyphoonYears();
     List<TyphMonitorWeb> getTyphoonRoute(long typhNum);
+    TyphInfo getTyphoonInfo(long typhNum);
 }
