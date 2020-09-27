@@ -11,4 +11,8 @@ public interface TyphoonInfoHome {
     List<String> getTyphoonYears();
     List<TyphMonitorWeb> getTyphoonRoute(long typhNum);
     TyphInfo getTyphoonInfo(long typhNum);
+
+//    TyphForecastWeb getTyphForecastChinaJapan();
+//    getTyphForecastUSAEurope();
+//    getTyphForecastTEPO();
 }
