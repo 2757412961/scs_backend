@@ -15,6 +15,7 @@
 	<!-- 定义service -->
 	<bean id="UserService" class="cn.edu.zju.gislab.SCSServices.service.impl.UserServiceImp"></bean>
 	<bean id="TyphoonInfoHome" class="cn.edu.zju.gislab.SCSServices.service.impl.TyphoonInfoHomeImp"></bean>
+	<bean id="RollForecastService" class="cn.edu.zju.gislab.SCSServices.service.impl.RollForecastServiceImp"></bean>
 
 
 
