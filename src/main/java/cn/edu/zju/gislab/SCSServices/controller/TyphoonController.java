@@ -50,7 +50,7 @@ public class TyphoonController {
     }
 
     // 获取特定年份的所有台风
-    @RequestMapping("/queryTyphoonInfo")
+    @RequestMapping("/queryTyphoonInfoNum")
     public @ResponseBody TyphInfo queryTyphoonInfo( long typhNum ) {
         TyphInfo result = typhoonInfoHome.getTyphoonInfo( typhNum );
         return result;
