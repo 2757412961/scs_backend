@@ -1,13 +1,14 @@
 package cn.edu.zju.gislab.SCSServices.service.impl;
 
-import cn.edu.zju.gislab.SCSServices.mapper.TyphInfoMapper;
-import cn.edu.zju.gislab.SCSServices.mapper.TyphMonitorMapper;
-import cn.edu.zju.gislab.SCSServices.mapper.TyphMonitorWebMapper;
+import cn.edu.zju.gislab.SCSServices.mapper.*;
 import cn.edu.zju.gislab.SCSServices.po.*;
 import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TyphoonInfoHomeImp implements TyphoonInfoHome {
@@ -17,6 +18,15 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
     @Autowired
     private TyphMonitorWebMapper typhMonitorWebMapper;
+
+    @Autowired
+    private TyphForecastWebMapper typhForecastWebMapper;
+
+    @Autowired
+    private TyphModelMapper typhModelMapper;
+
+    @Autowired
+    private TepoMapper tepoMapper;
 
     // 获取特定年份的所有台风
     @Override
@@ -118,6 +128,39 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
         if (typhInfoList.size() > 0) result = typhInfoList.get(0);
 
         return result;
+    }
+
+    @Override
+    public List<TyphForecastWeb> getTyphForecastChinaJapan(long typhNum, String staTime) {
+        List<TyphForecastWeb> results = null;
+
+        try {
+            Date staDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(staTime);
+
+            TyphForecastWebExample typhForecastWebExample = new TyphForecastWebExample();
+            TyphForecastWebExample.Criteria criteria = typhForecastWebExample.createCriteria();
+            criteria.andTyphNumEqualTo(typhNum);
+            criteria.andQbsjEqualTo(staDate);
+            List<TyphForecastWeb> typhForecastWebList = typhForecastWebMapper.selectByExample(typhForecastWebExample);
+
+            if (typhForecastWebList.size() > 0) results = typhForecastWebList;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+    @Override
+    public List<TyphModel> getTyphForecastUSAEurope(long typhModelNum, String staTime) {
+        List<TyphModel> results = null;
+
+        TyphModelExample typhModelExample = new TyphModelExample();
+        TyphModelExample.Criteria criteria = typhModelExample.createCriteria();
+
+
+
+        return results;
     }
 
 }

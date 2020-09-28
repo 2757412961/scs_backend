@@ -7,12 +7,18 @@ import java.util.List;
 public interface TyphoonInfoHome {
     // 获取所有台风列表
     List<TyphInfo> getTyphoonList(long Year);
+
     TyphInfo getTyphoonOnGoing();
+
     List<String> getTyphoonYears();
+
     List<TyphMonitorWeb> getTyphoonRoute(long typhNum);
+
     TyphInfo getTyphoonInfo(long typhNum);
 
-//    TyphForecastWeb getTyphForecastChinaJapan();
-//    getTyphForecastUSAEurope();
-//    getTyphForecastTEPO();
+    List<TyphForecastWeb> getTyphForecastChinaJapan(long typhNum, String staTime);
+
+    List<TyphModel> getTyphForecastUSAEurope(long typhModelNum, String staTime);
+
+//    List<Tepo> getTyphForecastTEPO(long typhModelNum, String staTime);
 }
