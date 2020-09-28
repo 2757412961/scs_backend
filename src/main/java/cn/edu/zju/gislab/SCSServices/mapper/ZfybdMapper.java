@@ -19,4 +19,5 @@ public interface ZfybdMapper {
     int updateByExampleSelective(@Param("record") Zfybd record, @Param("example") ZfybdExample example);
 
     int updateByExample(@Param("record") Zfybd record, @Param("example") ZfybdExample example);
+    public List<String> selectSingleStringList(@Param(value="sqlStr") String sqlStr);
 }

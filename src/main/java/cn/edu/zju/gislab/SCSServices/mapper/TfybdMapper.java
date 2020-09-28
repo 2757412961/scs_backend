@@ -19,4 +19,5 @@ public interface TfybdMapper {
     int updateByExampleSelective(@Param("record") Tfybd record, @Param("example") TfybdExample example);
 
     int updateByExample(@Param("record") Tfybd record, @Param("example") TfybdExample example);
+    public List<String> selectSingleStringList(@Param(value="sqlStr") String sqlStr);
 }

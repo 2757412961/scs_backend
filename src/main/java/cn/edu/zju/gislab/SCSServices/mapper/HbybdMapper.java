@@ -19,4 +19,7 @@ public interface HbybdMapper {
     int updateByExampleSelective(@Param("record") Hbybd record, @Param("example") HbybdExample example);
 
     int updateByExample(@Param("record") Hbybd record, @Param("example") HbybdExample example);
+
+    public List<String> selectSingleStringList(@Param(value="sqlStr") String sqlStr);
+
 }

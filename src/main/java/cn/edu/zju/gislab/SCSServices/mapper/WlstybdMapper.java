@@ -19,4 +19,6 @@ public interface WlstybdMapper {
     int updateByExampleSelective(@Param("record") Wlstybd record, @Param("example") WlstybdExample example);
 
     int updateByExample(@Param("record") Wlstybd record, @Param("example") WlstybdExample example);
+    public List<String> selectSingleStringList(@Param(value="sqlStr") String sqlStr);
+
 }

@@ -19,4 +19,5 @@ public interface RddyxxMapper {
     int updateByExampleSelective(@Param("record") Rddyxx record, @Param("example") RddyxxExample example);
 
     int updateByExample(@Param("record") Rddyxx record, @Param("example") RddyxxExample example);
+    public List<String> selectSingleStringList(@Param(value="sqlStr") String sqlStr);
 }
