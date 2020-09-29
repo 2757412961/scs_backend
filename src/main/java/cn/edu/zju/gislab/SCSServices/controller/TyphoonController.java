@@ -66,12 +66,21 @@ public class TyphoonController {
         return result;
     }
 
-    // 获取美国/欧洲 台风预测点
+    // 获取 欧洲/美国 台风预测点
     @RequestMapping("/getTyphForecastUSAEurope")
     public @ResponseBody
-    List<TyphModel> queryTyphForecastUSAEurope(long typhNum, String staTime) {
-        List<TyphModel> result = typhoonInfoHome.getTyphForecastUSAEurope(typhNum, staTime);
+    List<TyphModel> queryTyphForecastUSAEurope(long typhNum, String staTime, String modelType) {
+        List<TyphModel> result = typhoonInfoHome.getTyphForecastUSAEurope(typhNum, staTime, modelType);
         return result;
     }
+
+    // 获取 欧洲/美国 台风预测点
+    @RequestMapping("/getTyphForecastTEPO")
+    public @ResponseBody
+    List<Tepo> queryTyphForecastUSAEurope(long typhNum, String staTime) {
+        List<Tepo> result = typhoonInfoHome.getTyphForecastTEPO(typhNum, staTime);
+        return result;
+    }
+
 
 }

@@ -18,7 +18,7 @@ public interface TyphoonInfoHome {
 
     List<TyphForecastWeb> getTyphForecastChinaJapan(long typhNum, String staTime);
 
-    List<TyphModel> getTyphForecastUSAEurope(long typhModelNum, String staTime);
+    List<TyphModel> getTyphForecastUSAEurope(long typhModelNum, String staTime, String modelType);
 
-//    List<Tepo> getTyphForecastTEPO(long typhModelNum, String staTime);
+    List<Tepo> getTyphForecastTEPO(long typhModelNum, String staTime);
 }
