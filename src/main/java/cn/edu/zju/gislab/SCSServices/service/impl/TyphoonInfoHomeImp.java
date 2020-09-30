@@ -6,9 +6,14 @@ import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+/**
+ * Aauthor:zjh
+ */
 
 public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
@@ -163,6 +168,13 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             String staTimeWorld = "";
 
             // 找到最近的日期
+            String sqlStr = "select max(st_time) from typh_model " +
+                    " WHERE st_time <= " + sdfSimple.format(staDateWorld) +
+                    " and st_time >= " + sdfSimple.format(last48staDateWorld);
+            List<TyphModel> typhModelListLast = typhModelMapper.selectSingleStringList(sqlStr);
+            if (typhModelListLast.size() <= 0) return results;
+
+            // 找到最近的日期
             TyphModelExample typhModelExampleLast = new TyphModelExample();
             TyphModelExample.Criteria criteriaLast = typhModelExampleLast.createCriteria();
             criteriaLast.andIdxEqualTo(String.valueOf(typhModelNum));
@@ -248,34 +260,54 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
         try {
             Date staDateChina = sdfLocal.parse(staTime);
-            Date staDateWorld = new Date(staDateChina.getTime() - 8 * 60 * 60 * 1000);
-            Date last48staDateWorld = new Date(staDateWorld.getTime() - 48 * 60 * 60 * 1000);
+            Date staDateWorld = new Date(staDateChina.getTime() - 18 * 60 * 60 * 1000);
+            Date last48staDateWorld = new Date(staDateWorld.getTime() - 58 * 60 * 60 * 1000);
+
+            String sqlStr = "select distinct st_time, predict_num from TEPO " +
+                    " WHERE st_time <= " + sdfSimple.format(staDateWorld) +
+                    " and st_time >= " + sdfSimple.format(last48staDateWorld);
+            List<Tepo> tepoListLast = tepoMapper.selectSingleStringList(sqlStr);
+            if (tepoListLast.size() <= 0) return results;
 
             // 找到最近的日期
-            TepoExample tepoExampleLast = new TepoExample();
-            TepoExample.Criteria criteriaLast = tepoExampleLast.createCriteria();
-            criteriaLast.andIdxEqualTo(String.valueOf(typhModelNum));
-            criteriaLast.andStTimeGreaterThanOrEqualTo(sdfSimple.format(last48staDateWorld));
-            criteriaLast.andStTimeLessThanOrEqualTo(sdfSimple.format(staDateWorld));
-            tepoExampleLast.setOrderByClause("st_time DESC");
-            List<Tepo> tepoListLast = tepoMapper.selectByExample(tepoExampleLast);
-            if (tepoListLast.size() <= 0) return results;
-            String timeLast = tepoListLast.get(0).getStTime();
-            int predict_num = tepoListLast.get(0).getPredictNum();
+            Date maxStaDateChina = new Date();
+            Date maxStaDateWorld = new Date();
+            int predict_num = 0;
+            for (int i = 0; i < tepoListLast.size(); i++) {
+                Tepo tepo = tepoListLast.get(i);
+                Date stDateChina = sdfSimple.parse(tepo.getStTime());
+                if (tepo.getPredictNum() == 1) {
+                    stDateChina = new Date(stDateChina.getTime() + 18 * 60 * 60 * 1000);
+                } else if (tepo.getPredictNum() == 2) {
+                    stDateChina = new Date(stDateChina.getTime() + 20 * 60 * 60 * 1000);
+                } else if (tepo.getPredictNum() == 3) {
+                    stDateChina = new Date(stDateChina.getTime() + 26 * 60 * 60 * 1000);
+                }
 
+                if (stDateChina.compareTo(staDateChina) <= 0) {
+                    if (predict_num == 0 || stDateChina.compareTo(maxStaDateChina) > 0) {
+                        predict_num = tepo.getPredictNum();
+                        maxStaDateChina = stDateChina;
+                        maxStaDateWorld = sdfSimple.parse(tepo.getStTime());
+                    }
+                }
+            }
+
+            int staHour = (int)(staDateChina.getTime() - maxStaDateWorld.getTime()) / 60 / 60 / 1000 - 8;
             TepoExample tepoExample = new TepoExample();
             TepoExample.Criteria criteria = tepoExample.createCriteria();
             criteria.andIdxEqualTo(String.valueOf(typhModelNum));
-            criteria.andStTimeEqualTo(timeLast);
+            criteria.andStTimeEqualTo(sdfSimple.format(maxStaDateWorld));
             criteria.andPredictNumEqualTo(predict_num);
+            criteria.andFcTimeBetween(staHour, 120);
             tepoExample.setOrderByClause("fc_time");
             List<Tepo> tepoList = tepoMapper.selectByExample(tepoExample);
 
             // 合并
             results = new ArrayList<>();
             if (tepoList.size() > 0) {
-                Date staDateLast = sdfSimple.parse(timeLast);
-                Date staDate = new Date(staDateLast.getTime() + 8 * 60 * 60 * 1000);
+                Date staDate = new Date(maxStaDateWorld.getTime() + 8 * 60 * 60 * 1000);
+                BigDecimal zero = new BigDecimal(0);
                 for (int i = 0; i < tepoList.size(); i++) {
                     Tepo tepo = tepoList.get(i);
                     int fctime = tepo.getFcTime();
@@ -283,8 +315,9 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
                     tepo.setStTime(sdfLocal.format(staDate));
                     tepo.setLocation(sdfLocal.format(endDate));
-                    tepo.setLng(tepo.getLng().abs().divide(new BigDecimal(10), 3));
-                    tepo.setLat(tepo.getLat().abs().divide(new BigDecimal(10), 3));
+                    tepo.setLng((tepo.getLng().compareTo(zero) >= 0 ? tepo.getLng() : tepo.getLng().add(new BigDecimal(3600)))
+                            .divide(new BigDecimal(10), 1, RoundingMode.HALF_UP));
+                    tepo.setLat(tepo.getLat().divide(new BigDecimal(10), 1, RoundingMode.HALF_UP));
                     results.add(tepo);
                 }
             }

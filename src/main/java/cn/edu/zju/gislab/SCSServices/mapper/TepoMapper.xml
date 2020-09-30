@@ -287,4 +287,8 @@
       PREDICT_NUM = #{predictNum,jdbcType=DECIMAL}
     where ID = #{id,jdbcType=DECIMAL}
   </update>
+
+  <select id="selectSingleStringList" parameterType="String" resultMap="BaseResultMap">
+	${sqlStr}
+  </select>
 </mapper>

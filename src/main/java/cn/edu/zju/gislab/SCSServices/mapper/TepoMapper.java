@@ -2,7 +2,9 @@ package cn.edu.zju.gislab.SCSServices.mapper;
 
 import cn.edu.zju.gislab.SCSServices.po.Tepo;
 import cn.edu.zju.gislab.SCSServices.po.TepoExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TepoMapper {
@@ -27,4 +29,6 @@ public interface TepoMapper {
     int updateByPrimaryKeySelective(Tepo record);
 
     int updateByPrimaryKey(Tepo record);
+
+    List<Tepo> selectSingleStringList(@Param(value = "sqlStr") String sqlStr);
 }

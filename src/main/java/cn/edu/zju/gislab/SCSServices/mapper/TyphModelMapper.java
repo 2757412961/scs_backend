@@ -2,7 +2,9 @@ package cn.edu.zju.gislab.SCSServices.mapper;
 
 import cn.edu.zju.gislab.SCSServices.po.TyphModel;
 import cn.edu.zju.gislab.SCSServices.po.TyphModelExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TyphModelMapper {
@@ -27,4 +29,6 @@ public interface TyphModelMapper {
     int updateByPrimaryKeySelective(TyphModel record);
 
     int updateByPrimaryKey(TyphModel record);
+
+    List<TyphModel> selectSingleStringList(@Param(value = "sqlStr") String sqlStr);
 }
