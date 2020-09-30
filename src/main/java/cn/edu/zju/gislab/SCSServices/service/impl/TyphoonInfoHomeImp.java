@@ -163,86 +163,49 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
         try {
             Date staDateChina = sdfLocal.parse(staTime);
-            Date staDateWorld = new Date(staDateChina.getTime() - 8 * 60 * 60 * 1000);
-            Date last48staDateWorld = new Date(staDateWorld.getTime() - 48 * 60 * 60 * 1000);
-            String staTimeWorld = "";
+            Date staDateWorld = new Date(staDateChina.getTime() - 18 * 60 * 60 * 1000);
+            Date last48staDateWorld = new Date(staDateWorld.getTime() - 58 * 60 * 60 * 1000);
 
             // 找到最近的日期
-            String sqlStr = "select max(st_time) from typh_model " +
+            String sqlStr = "select max(st_time) as st_time from typh_model " +
                     " WHERE st_time <= " + sdfSimple.format(staDateWorld) +
                     " and st_time >= " + sdfSimple.format(last48staDateWorld);
             List<TyphModel> typhModelListLast = typhModelMapper.selectSingleStringList(sqlStr);
             if (typhModelListLast.size() <= 0) return results;
+            String maxStTime = typhModelListLast.get(0).getStTime();
+            Date maxStaDateWorld = sdfSimple.parse(maxStTime);
 
-            // 找到最近的日期
-            TyphModelExample typhModelExampleLast = new TyphModelExample();
-            TyphModelExample.Criteria criteriaLast = typhModelExampleLast.createCriteria();
-            criteriaLast.andIdxEqualTo(String.valueOf(typhModelNum));
-            criteriaLast.andModelTypeEqualTo(modelType);
-            criteriaLast.andStTimeGreaterThanOrEqualTo(sdfSimple.format(last48staDateWorld));
-            criteriaLast.andStTimeLessThanOrEqualTo(sdfSimple.format(staDateWorld));
-            typhModelExampleLast.setOrderByClause("st_time DESC");
-            List<TyphModel> typhModelListsLast = typhModelMapper.selectByExample(typhModelExampleLast);
-            if (typhModelListsLast.size() <= 0) return results;
-            staTimeWorld = typhModelListsLast.get(0).getStTime();
-
-            TyphModelExample typhModelExample = new TyphModelExample();
-            TyphModelExample.Criteria criteria = typhModelExample.createCriteria();
-            criteria.andIdxEqualTo(String.valueOf(typhModelNum));
-            criteria.andModelTypeEqualTo(modelType);
-            criteria.andStTimeEqualTo(staTimeWorld);
-            List<TyphModel> typhModelList = typhModelMapper.selectByExample(typhModelExample);
+            // Group 取平均值 操作
+            String sqlStrGroup = "select idx, st_time, fc_time, model_type, radius, " +
+                    "   AVG(case when (lng<0) then (lng+3600) else lng end)/10 as lng, " +
+                    "   AVG(lat)/10 as lat, AVG(speed) as speed, AVG(pressure) as pressure " +
+                    " from typh_model " +
+                    " WHERE st_time = " + maxStTime +
+                    "   and idx = " + typhModelNum +
+                    "   and model_type = '" + modelType + "'" +
+                    "   and fc_time <= " + 120 +
+                    "   and radius = " + 34 +
+                    " Group by idx, st_time, model_type, fc_time, radius " +
+                    " Order by fc_time";
+            List<TyphModel> typhModelList = typhModelMapper.selectSingleStringList(sqlStrGroup);
+            if (typhModelList.size() <= 0) return results;
 
             // 合并
             if (typhModelList.size() > 0) {
-                Date staDateLast = sdfSimple.parse(staTimeWorld);
-                Date staDate = new Date(staDateLast.getTime() + 8 * 60 * 60 * 1000);
-                Map<Integer, TyphModel> map = new HashMap<>();
-                Map<Integer, Integer> con = new HashMap<>();
-
-                // 计算总和
-                for (int i = 0; i < typhModelList.size(); i++) {
-                    TyphModel now = typhModelList.get(i);
-                    int key = now.getFcTime();
-                    if (!map.containsKey(key)) {
-                        int fctime = now.getFcTime();
-                        Date endDate = new Date(staDate.getTime() + fctime * 60 * 60 * 1000);
-
-                        now.setStTime(sdfLocal.format(staDate));
-                        now.setLocation(sdfLocal.format(endDate));
-                        now.setLng(now.getLng().abs());
-                        now.setLat(now.getLat().abs());
-
-                        map.put(key, now);
-                        con.put(key, 1);
-                    } else {
-                        TyphModel model = map.get(key);
-                        model.setLng(model.getLng().add(now.getLng().abs()));
-                        model.setLat(model.getLat().add(now.getLat().abs()));
-                        model.setSpeed(model.getSpeed().add(now.getSpeed()));
-                        model.setPressure(model.getPressure().add(now.getPressure()));
-
-                        map.put(key, model);
-                        con.put(key, con.get(key) + 1);
-                    }
-                }
-
-                // 排序 map转换为list
                 results = new ArrayList<>();
-                for (Map.Entry<Integer, TyphModel> entry : map.entrySet()) {
-                    int key = entry.getKey();
-                    TyphModel val = entry.getValue();
-                    int count = con.get(key);
-                    val.setLng(val.getLng().divide(new BigDecimal(count * 10), 4));
-                    val.setLat(val.getLat().divide(new BigDecimal(count * 10), 3));
-                    val.setSpeed(val.getSpeed().divide(new BigDecimal(count), 3));
-                    val.setPressure(val.getPressure().divide(new BigDecimal(count), 4));
+                Date staDate = new Date(maxStaDateWorld.getTime() + 8 * 60 * 60 * 1000);
+                for (int i = 0; i < typhModelList.size(); i++) {
+                    TyphModel model = typhModelList.get(i);
+                    Date endDate = new Date(staDate.getTime() + model.getFcTime() * 60 * 60 * 1000);
 
-                    int pos = 0;
-                    for (; pos < results.size(); pos++) {
-                        if (key < results.get(pos).getFcTime()) break;
-                    }
-                    results.add(pos, val);
+                    model.setStTime(sdfLocal.format(staDate));
+                    model.setLocation(sdfLocal.format(endDate));
+                    model.setLng(model.getLng().setScale(1, RoundingMode.HALF_UP));
+                    model.setLat(model.getLat().setScale(1, RoundingMode.HALF_UP));
+                    model.setSpeed(model.getSpeed().setScale(0, RoundingMode.HALF_UP));
+                    model.setPressure(model.getPressure().setScale(0, RoundingMode.HALF_UP));
+
+                    results.add(model);
                 }
             }
         } catch (ParseException e) {
@@ -293,7 +256,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                 }
             }
 
-            int staHour = (int)(staDateChina.getTime() - maxStaDateWorld.getTime()) / 60 / 60 / 1000 - 8;
+            int staHour = (int) (staDateChina.getTime() - maxStaDateWorld.getTime()) / 60 / 60 / 1000 - 8;
             TepoExample tepoExample = new TepoExample();
             TepoExample.Criteria criteria = tepoExample.createCriteria();
             criteria.andIdxEqualTo(String.valueOf(typhModelNum));
@@ -318,6 +281,8 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     tepo.setLng((tepo.getLng().compareTo(zero) >= 0 ? tepo.getLng() : tepo.getLng().add(new BigDecimal(3600)))
                             .divide(new BigDecimal(10), 1, RoundingMode.HALF_UP));
                     tepo.setLat(tepo.getLat().divide(new BigDecimal(10), 1, RoundingMode.HALF_UP));
+                    tepo.setSpeed(tepo.getSpeed().setScale(0, RoundingMode.HALF_UP));
+                    tepo.setPressure(tepo.getPressure().setScale(0, RoundingMode.HALF_UP));
                     results.add(tepo);
                 }
             }
