@@ -139,12 +139,23 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
         List<TyphForecastWeb> results = null;
 
         try {
-            Date staDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(staTime);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date staDate = sdf.parse(staTime);
+            Date last48staDate = new Date(staDate.getTime() - 48 * 60 * 60 * 1000);
+
+            // 找到最近的日期
+            String sqlStr = "select max(qbsj) as qbsj from typh_forecast_web " +
+                    " WHERE typh_num = " + typhNum +
+                    " and qbsj <= to_date('" + sdf.format(staDate) + "','yyyy-mm-dd hh24:mi:ss')" +
+                    " and qbsj >= to_date('" + sdf.format(last48staDate) + "','yyyy-mm-dd hh24:mi:ss')";
+            List<TyphForecastWeb> typhForecastWebListLast = typhForecastWebMapper.selectSingleStringList(sqlStr);
+            if (typhForecastWebListLast.size() <= 0) return results;
+            Date maxStaDate = typhForecastWebListLast.get(0).getQbsj();
 
             TyphForecastWebExample typhForecastWebExample = new TyphForecastWebExample();
             TyphForecastWebExample.Criteria criteria = typhForecastWebExample.createCriteria();
             criteria.andTyphNumEqualTo(typhNum);
-            criteria.andQbsjEqualTo(staDate);
+            criteria.andQbsjEqualTo(maxStaDate);
             List<TyphForecastWeb> typhForecastWebList = typhForecastWebMapper.selectByExample(typhForecastWebExample);
 
             if (typhForecastWebList.size() > 0) results = typhForecastWebList;
@@ -176,6 +187,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             Date maxStaDateWorld = sdfSimple.parse(maxStTime);
 
             // Group 取平均值 操作
+            int staHour = (int) (staDateChina.getTime() - maxStaDateWorld.getTime()) / 60 / 60 / 1000 - 8;
             String sqlStrGroup = "select idx, st_time, fc_time, model_type, radius, " +
                     "   AVG(case when (lng<0) then (lng+3600) else lng end)/10 as lng, " +
                     "   AVG(lat)/10 as lat, AVG(speed) as speed, AVG(pressure) as pressure " +
@@ -184,6 +196,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     "   and idx = " + typhModelNum +
                     "   and model_type = '" + modelType + "'" +
                     "   and fc_time <= " + 120 +
+                    "   and fc_time >= " + staHour +
                     "   and radius = " + 34 +
                     " Group by idx, st_time, model_type, fc_time, radius " +
                     " Order by fc_time";

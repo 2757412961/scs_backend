@@ -318,4 +318,8 @@
       and QBSJ = #{qbsj,jdbcType=TIMESTAMP}
       and YBSJ = #{ybsj,jdbcType=TIMESTAMP}
   </update>
+
+  <select id="selectSingleStringList" parameterType="String" resultMap="BaseResultMap">
+	${sqlStr}
+  </select>
 </mapper>
