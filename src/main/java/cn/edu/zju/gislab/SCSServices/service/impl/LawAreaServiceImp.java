@@ -25,4 +25,16 @@ public class LawAreaServiceImp implements LawAreaService {
 
         return results;
     }
+
+    @Override
+    public List<Zfhy> getZfhyAll() {
+        List<Zfhy> results = null;
+
+        ZfhyExample zfhyExample = new ZfhyExample();
+        List<Zfhy> zfhyList = zfhyMapper.selectByExample(zfhyExample);
+        if (zfhyList.size() > 0) results = zfhyList;
+
+        return results;
+    }
+
 }

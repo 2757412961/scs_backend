@@ -21,7 +21,7 @@ public class LawAreaController {
     @Autowired
     private LawAreaService lawAreaService;
 
-    @RequestMapping()
+    @RequestMapping("/getZfhyByName")
     @ResponseBody
     public List<Zfhy> queryZfhyByName(String areaName) {
         List<Zfhy> results = lawAreaService.getZfhyByName(areaName);
@@ -29,5 +29,12 @@ public class LawAreaController {
         return results;
     }
 
+    @RequestMapping("/queryZfhyAll")
+    @ResponseBody
+    public List<Zfhy> queryZfhyAll() {
+        List<Zfhy> results = lawAreaService.getZfhyAll();
+
+        return results;
+    }
 
 }

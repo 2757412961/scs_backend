@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface LawAreaService {
     List<Zfhy> getZfhyByName(String areaName);
+
+    List<Zfhy> getZfhyAll();
 }
