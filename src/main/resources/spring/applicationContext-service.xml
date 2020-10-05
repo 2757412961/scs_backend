@@ -17,7 +17,7 @@
 	<bean id="TyphoonInfoHome" class="cn.edu.zju.gislab.SCSServices.service.impl.TyphoonInfoHomeImp"></bean>
 	<bean id="RollForecastService" class="cn.edu.zju.gislab.SCSServices.service.impl.RollForecastServiceImp"></bean>
 	<bean id="PredictionPaperService" class="cn.edu.zju.gislab.SCSServices.service.impl.PredictionPaperServiceImp"></bean>
-
+	<bean id="LawAreaService" class="cn.edu.zju.gislab.SCSServices.service.impl.LawAreaServiceImp"></bean>
 
 
 </beans>
