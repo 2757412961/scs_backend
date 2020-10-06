@@ -18,6 +18,6 @@
 	<bean id="RollForecastService" class="cn.edu.zju.gislab.SCSServices.service.impl.RollForecastServiceImp"></bean>
 	<bean id="PredictionPaperService" class="cn.edu.zju.gislab.SCSServices.service.impl.PredictionPaperServiceImp"></bean>
 	<bean id="LawAreaService" class="cn.edu.zju.gislab.SCSServices.service.impl.LawAreaServiceImp"></bean>
-
+	<bean id="productImgsService" class="cn.edu.zju.gislab.SCSServices.service.impl.ProductImgsServiceImp"></bean>
 
 </beans>
