@@ -82,5 +82,37 @@ public class TyphoonController {
         return result;
     }
 
+    // 获取日本 台风预测点
+    @RequestMapping("/getTyphForecastJapan")
+    public @ResponseBody
+    List<TyphForecastWeb> queryTyphForecastJapan(long typhNum, String staTime) {
+        List<TyphForecastWeb> result = typhoonInfoHome.getTyphForecastByTable(typhNum, staTime, "TYPH_JP_WEB");
+        return result;
+    }
+
+    // 获取韩国 台风预测点
+    @RequestMapping("/getTyphForecastKorea")
+    public @ResponseBody
+    List<TyphForecastWeb> queryTyphForecastKorea(long typhNum, String staTime) {
+        List<TyphForecastWeb> result = typhoonInfoHome.getTyphForecastByTable(typhNum, staTime, "TYPH_KR_WEB");
+        return result;
+    }
+
+    // 获取香港 台风预测点
+    @RequestMapping("/getTyphForecastHongKong")
+    public @ResponseBody
+    List<TyphForecastWeb> queryTyphForecastHongKong(long typhNum, String staTime) {
+        List<TyphForecastWeb> result = typhoonInfoHome.getTyphForecastByTable(typhNum, staTime, "TYPH_HK_WEB");
+        return result;
+    }
+
+    // 获取台湾 台风预测点
+    @RequestMapping("/getTyphForecastTaiwan")
+    public @ResponseBody
+    List<TyphForecastWeb> queryTyphForecastTaiwan(long typhNum, String staTime) {
+        List<TyphForecastWeb> result = typhoonInfoHome.getTyphForecastByTable(typhNum, staTime, "TYPH_TW_WEB");
+        return result;
+    }
+
 
 }

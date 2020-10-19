@@ -32,6 +32,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
     @Autowired
     private TepoMapper tepoMapper;
 
+
     // 获取特定年份的所有台风
     @Override
     public List<TyphInfo> getTyphoonList(long Year) {
@@ -149,7 +150,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     " and qbsj <= to_date('" + sdf.format(staDate) + "','yyyy-mm-dd hh24:mi:ss')" +
                     " and qbsj >= to_date('" + sdf.format(last48staDate) + "','yyyy-mm-dd hh24:mi:ss')";
             List<TyphForecastWeb> typhForecastWebListLast = typhForecastWebMapper.selectSingleStringList(sqlStr);
-            if (typhForecastWebListLast.size() <= 0) return results;
+            if (typhForecastWebListLast.remove(null) || typhForecastWebListLast.isEmpty()) return results;
             Date maxStaDate = typhForecastWebListLast.get(0).getQbsj();
 
             TyphForecastWebExample typhForecastWebExample = new TyphForecastWebExample();
@@ -182,7 +183,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     " WHERE st_time <= " + sdfSimple.format(staDateWorld) +
                     " and st_time >= " + sdfSimple.format(last48staDateWorld);
             List<TyphModel> typhModelListLast = typhModelMapper.selectSingleStringList(sqlStr);
-            if (typhModelListLast.size() <= 0) return results;
+            if (typhModelListLast.remove(null) || typhModelListLast.isEmpty()) return results;
             String maxStTime = typhModelListLast.get(0).getStTime();
             Date maxStaDateWorld = sdfSimple.parse(maxStTime);
 
@@ -201,7 +202,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     " Group by idx, st_time, model_type, fc_time, radius " +
                     " Order by fc_time";
             List<TyphModel> typhModelList = typhModelMapper.selectSingleStringList(sqlStrGroup);
-            if (typhModelList.size() <= 0) return results;
+            if (typhModelList.remove(null) || typhModelList.isEmpty()) return results;
 
             // 合并
             if (typhModelList.size() > 0) {
@@ -243,7 +244,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
                     " WHERE st_time <= " + sdfSimple.format(staDateWorld) +
                     " and st_time >= " + sdfSimple.format(last48staDateWorld);
             List<Tepo> tepoListLast = tepoMapper.selectSingleStringList(sqlStr);
-            if (tepoListLast.size() <= 0) return results;
+            if (tepoListLast.remove(null) || tepoListLast.isEmpty()) return results;
 
             // 找到最近的日期
             Date maxStaDateChina = new Date();
@@ -305,5 +306,41 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
 
         return results;
     }
+
+
+    // 2020/10/19 加入新的四个中心
+    @Override
+    public List<TyphForecastWeb> getTyphForecastByTable(long typhNum, String staTime, String tableName) {
+        List<TyphForecastWeb> results = null;
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date staDate = sdf.parse(staTime);
+            Date last48staDate = new Date(staDate.getTime() - 48 * 60 * 60 * 1000);
+
+            // 找到最近的日期
+            String sqlStrLast = "select max(qbsj) as qbsj" +
+                    " from " + tableName +
+                    " WHERE typh_num = " + typhNum +
+                    " and qbsj <= to_date('" + sdf.format(staDate) + "','yyyy-mm-dd hh24:mi:ss')" +
+                    " and qbsj >= to_date('" + sdf.format(last48staDate) + "','yyyy-mm-dd hh24:mi:ss')";
+            List<TyphForecastWeb> typhTablrWebListLast = typhForecastWebMapper.selectSingleStringList(sqlStrLast);
+            if (typhTablrWebListLast.remove(null) || typhTablrWebListLast.isEmpty()) return results;
+            Date maxStaDate = typhTablrWebListLast.get(0).getQbsj();
+
+            String sqlStr = "select * " +
+                    " FROM " + tableName +
+                    " WHERE typh_num = " + typhNum +
+                    "   and qbsj = to_date('" + sdf.format(maxStaDate) + "','yyyy-mm-dd hh24:mi:ss')";
+            List<TyphForecastWeb> typhTableWebList = typhForecastWebMapper.selectSingleStringList(sqlStr);
+            if (typhTableWebList.size() > 0) results = typhTableWebList;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
 
 }
