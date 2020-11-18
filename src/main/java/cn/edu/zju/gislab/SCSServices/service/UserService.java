@@ -3,14 +3,24 @@ package cn.edu.zju.gislab.SCSServices.service;
 
 import cn.edu.zju.gislab.SCSServices.po.ScsUsers;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-	//登录验证
-	int checkLogin(String username, String password);
-	List<ScsUsers> getAllUsers();
-	int updateUser(String username,String password,int groupId);
-	int addUser(String username,String password,int groupId);
-	int deleteUser(String username);
+    // 登录验证
+    int checkLogin(String username, String password);
+
+    // 登出
+//    Boolean logout(HttpServletRequest request, HttpServletResponse response);
+
+    List<ScsUsers> getAllUsers();
+
+    int updateUser(String username, String password, int groupId);
+
+    int addUser(String username, String password, int groupId);
+
+    int deleteUser(String username);
 }

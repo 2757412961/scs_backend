@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.*;
-import java.net.HttpCookie;
-import java.util.Enumeration;
 import java.util.List;
 
 @RestController
@@ -20,12 +18,38 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // 是否登录
+    @GetMapping("/isLogin")
+    public Boolean isLogin(HttpServletResponse response) {
+
+
+        return false;
+    }
+
     // 登录验证
     @RequestMapping("/login")
-    public int login(String username, String password) {
+    public int login(String username, String password,
+                     HttpSession session,
+                     HttpServletRequest request, HttpServletResponse response) {
         // 登录验证
         int loginResult = userService.checkLogin(username, password);
+
+        if (loginResult != -1) {
+            Cookie cookie = new Cookie("cookieUseName", username);
+            cookie.setMaxAge(20); // 单位：秒
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+
+        // 返回用户权限
         return loginResult;
+    }
+
+
+    @RequestMapping("/logout")
+    public Boolean logout(HttpServletRequest request, HttpServletResponse response) {
+
+        return false;
     }
 
     // 查询所有用户
@@ -55,9 +79,9 @@ public class UserController {
 
     // 曲终人散
     @RequestMapping("/userLogin")
-    public Enumeration<String> userLogin(String username, String password,
-                                         HttpSession session,
-                                         HttpServletRequest request, HttpServletResponse response) {
+    public Cookie[] userLogin(String username, String password,
+                              HttpSession session,
+                              HttpServletRequest request, HttpServletResponse response) {
 
 //        session.setAttribute("username", username);
 //        session.setAttribute("password", password);
@@ -69,7 +93,9 @@ public class UserController {
         logger.error("error日志");
         logger.warn("warn日志");
 
-        return session.getAttributeNames();
+        Cookie[] cookies = request.getCookies();
+
+        return cookies;
     }
 
 }

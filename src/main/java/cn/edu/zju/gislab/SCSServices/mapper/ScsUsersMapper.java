@@ -34,4 +34,6 @@ public interface ScsUsersMapper {
     int updateByPrimaryKeyWithBLOBs(ScsUsers record);
 
     int updateByPrimaryKey(ScsUsers record);
+
+    List<ScsUsers> selectBySingleStr(@Param("sqlStr") String sqlStr);
 }

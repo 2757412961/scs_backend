@@ -7,7 +7,7 @@ public class ScsUsers {
 
     private Integer groupId;
 
-    private String grants;
+    private Integer grants;
 
     public String getUsername() {
         return username;
@@ -33,11 +33,11 @@ public class ScsUsers {
         this.groupId = groupId;
     }
 
-    public String getGrants() {
+    public Integer getGrants() {
         return grants;
     }
 
-    public void setGrants(String grants) {
-        this.grants = grants == null ? null : grants.trim();
-    }
+//    public void setGrants(String grants) {
+//        this.grants = grants == null ? null : grants.trim();
+//    }
 }

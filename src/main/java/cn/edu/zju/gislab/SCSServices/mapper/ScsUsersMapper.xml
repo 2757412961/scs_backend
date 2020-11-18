@@ -7,7 +7,7 @@
     <result column="GROUP_ID" property="groupId" jdbcType="DECIMAL" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="cn.edu.zju.gislab.SCSServices.po.ScsUsers" extends="BaseResultMap" >
-    <result column="GRANTS" property="grants" jdbcType="LONGVARCHAR" />
+    <result column="GRANTS" property="grants" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -231,4 +231,8 @@
       GROUP_ID = #{groupId,jdbcType=DECIMAL}
     where USERNAME = #{username,jdbcType=OTHER}
   </update>
+
+  <select id="selectBySingleStr" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    ${sqlStr}
+  </select>
 </mapper>
