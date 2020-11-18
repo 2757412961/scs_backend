@@ -1,7 +1,11 @@
 package cn.edu.zju.gislab.SCSServices.Config;
 
+import cn.edu.zju.gislab.SCSServices.Constant.ConstantCookie;
+import cn.edu.zju.gislab.SCSServices.Util.UtilCookie;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,18 +28,14 @@ public class LoginFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession();
 
-        // 暂时不过滤，意图：用于用户登录验证
-//        String uri = req.getRequestURI();
-//        boolean isLoginReq = uri.matches("/user/.*\\.do");
-//
-//        boolean isLogin = session.getAttribute("isLogin") != null
-//                && (boolean) session.getAttribute("isLogin");
-//        if (isLoginReq || isLogin) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-//        //跳转至登录页面
-//        res.sendRedirect("/user/login.do");
+        // 用于用户登录验证
+        String uri = req.getRequestURI();
+        boolean isLoginReq = uri.matches("/SCSServices/login.action");
+
+        Cookie cookie = UtilCookie.getCookie(req.getCookies(), ConstantCookie.USERNAME);
+        if (!isLoginReq && (cookie == null || cookie.getValue().equals(""))) {
+            return;
+        }
 
         chain.doFilter(request, response);
     }

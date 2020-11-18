@@ -13,9 +13,6 @@ public interface UserService {
     // 登录验证
     int checkLogin(String username, String password);
 
-    // 登出
-//    Boolean logout(HttpServletRequest request, HttpServletResponse response);
-
     List<ScsUsers> getAllUsers();
 
     int updateUser(String username, String password, int groupId);

@@ -1,5 +1,7 @@
 package cn.edu.zju.gislab.SCSServices.controller;
 
+import cn.edu.zju.gislab.SCSServices.Constant.ConstantCookie;
+import cn.edu.zju.gislab.SCSServices.Util.UtilCookie;
 import cn.edu.zju.gislab.SCSServices.po.ScsUsers;
 import cn.edu.zju.gislab.SCSServices.service.UserService;
 
@@ -20,8 +22,11 @@ public class UserController {
 
     // 是否登录
     @GetMapping("/isLogin")
-    public Boolean isLogin(HttpServletResponse response) {
-
+    public Boolean isLogin(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = UtilCookie.getCookie(request.getCookies(), ConstantCookie.USERNAME);
+        if (cookie != null && !cookie.getValue().equals("")) {
+            return true;
+        }
 
         return false;
     }
@@ -35,9 +40,7 @@ public class UserController {
         int loginResult = userService.checkLogin(username, password);
 
         if (loginResult != -1) {
-            Cookie cookie = new Cookie("cookieUseName", username);
-            cookie.setMaxAge(20); // 单位：秒
-            cookie.setPath("/");
+            Cookie cookie = UtilCookie.createCookie(ConstantCookie.USERNAME, username);
             response.addCookie(cookie);
         }
 
@@ -45,9 +48,14 @@ public class UserController {
         return loginResult;
     }
 
-
     @RequestMapping("/logout")
     public Boolean logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = UtilCookie.getCookie(request.getCookies(), ConstantCookie.USERNAME);
+
+        if (UtilCookie.delCookie(cookie)) {
+            response.addCookie(cookie);
+            return true;
+        }
 
         return false;
     }
