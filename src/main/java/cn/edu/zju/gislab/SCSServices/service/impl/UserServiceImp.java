@@ -79,6 +79,29 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public String signUp(Map<String, String[]> parameterMap) {
+        String username = parameterMap.getOrDefault("username", new String[]{"username"})[0];
+        String password = parameterMap.getOrDefault("password", new String[]{"password"})[0];
+        int group = Integer.parseInt(parameterMap.getOrDefault("group", new String[]{"0"})[0]);
+        int grant = Integer.parseInt(parameterMap.getOrDefault("grant", new String[]{"0"})[0]);
+
+        // 如果已存在用户名，返回
+        ScsUsers scsUsersExits = searchUser(username);
+        if (scsUsersExits != null) return null;
+
+        ScsUsers scsUsers = new ScsUsers();
+        scsUsers.setUsername(username);
+        scsUsers.setPassword(password);
+        scsUsers.setGrants(grant);
+        scsUsers.setGroupId(group);
+        if (usersMapper.insertSelective(scsUsers) == 1) {
+            return username;
+        }
+
+        return null;
+    }
+
+    @Override
     public List<ScsUsers> getAllUsers() {
         ScsUsersExample usersExample = new ScsUsersExample();
         List<ScsUsers> userList = usersMapper.selectByExample(usersExample);

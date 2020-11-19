@@ -37,7 +37,7 @@ public class ScsUsers {
         return grants;
     }
 
-//    public void setGrants(String grants) {
-//        this.grants = grants == null ? null : grants.trim();
-//    }
+    public void setGrants(Integer grants) {
+        this.grants = grants;
+    }
 }

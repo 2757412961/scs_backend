@@ -9,9 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.*;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -53,6 +56,19 @@ public class UserController {
         Cookie cookie = UtilCookie.getCookie(request.getCookies(), ConstantCookie.USERNAME);
 
         if (UtilCookie.delCookie(cookie)) {
+            response.addCookie(cookie);
+            return true;
+        }
+
+        return false;
+    }
+
+    @PostMapping("/signup")
+    public Boolean signUp(@RequestBody HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String username = userService.signUp(parameterMap);
+        if (username != null) {
+            Cookie cookie = UtilCookie.createCookie(ConstantCookie.USERNAME, username);
             response.addCookie(cookie);
             return true;
         }

@@ -30,7 +30,9 @@ public class LoginFilter implements Filter {
 
         // 用于用户登录验证
         String uri = req.getRequestURI();
-        boolean isLoginReq = uri.matches("/SCSServices/login.action");
+        boolean isLoginReq =
+                uri.matches("/SCSServices/login.action") ||
+                uri.matches("/SCSServices/signup.action");
 
         Cookie cookie = UtilCookie.getCookie(req.getCookies(), ConstantCookie.USERNAME);
         if (!isLoginReq && (cookie == null || cookie.getValue().equals(""))) {

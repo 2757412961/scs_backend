@@ -3,15 +3,15 @@ package cn.edu.zju.gislab.SCSServices.service;
 
 import cn.edu.zju.gislab.SCSServices.po.ScsUsers;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
     // 登录验证
     int checkLogin(String username, String password);
+
+    // 注册
+    String signUp(Map<String, String[]> parameterMap);
 
     List<ScsUsers> getAllUsers();
 

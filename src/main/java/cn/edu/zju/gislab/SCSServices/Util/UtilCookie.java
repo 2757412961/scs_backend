@@ -27,6 +27,8 @@ public class UtilCookie {
     }
 
     public static Cookie getCookie(Cookie[] cookies, String name) {
+        if (cookies == null || cookies.length == 0) return null;
+
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(name)) {
                 return cookie;
