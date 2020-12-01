@@ -62,16 +62,20 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             TyphInfoExample typhInfoExample = new TyphInfoExample();
             TyphInfoExample.Criteria criteria = typhInfoExample.createCriteria();
             criteria.andIsongoingEqualTo("1");
+            typhInfoExample.setOrderByClause("TYPH_NUM DESC");
             List<TyphInfo> typhInfoList = typhInfoMapper.selectByExample(typhInfoExample);
-            if (typhInfoList.size() > 0) {
-                result = typhInfoList.get(0);
-            } else {
-                return null;
+
+            for (int i = 0; i < typhInfoList.size(); i++) {
+                TyphInfo typhInfo = typhInfoList.get(i);
+                if (typhInfo.getTyphNum() != null) {
+                    return typhInfo;
+                }
             }
+
         } catch (Error e) {
             return null;
         }
-        return result;
+        return null;
     }
 
     // 获取现有台风的所有年份
