@@ -15,9 +15,9 @@ public interface UserService {
 
     List<ScsUsers> getAllUsers();
 
-    int updateUser(String username, String password, int groupId);
+    int updateUser(String username, String password, int grants);
 
-    int addUser(String username, String password, int groupId);
+    int addUser(String username, String password, int grants);
 
     int deleteUser(String username);
 }

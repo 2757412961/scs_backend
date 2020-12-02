@@ -84,8 +84,8 @@ public class UserController {
     }
 
     @RequestMapping("/updateUser")
-    public int updateUser(String username, String password, int category) {
-        int result = userService.updateUser(username, password, category);
+    public int updateUser(String username, String password, int grants) {
+        int result = userService.updateUser(username, password, grants);
         return result;
     }
 
@@ -96,8 +96,8 @@ public class UserController {
     }
 
     @RequestMapping("/addUser")
-    public int addUser(String username, String password, int groupId) {
-        int result = userService.addUser(username, password, groupId);
+    public int addUser(String username, String password, int grants) {
+        int result = userService.addUser(username, password, grants);
         return result;
     }
 

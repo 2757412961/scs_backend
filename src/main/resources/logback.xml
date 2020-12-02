@@ -2,7 +2,9 @@
 <configuration>
 
     <property name="log.max.size" value="10MB"/> <!-- 日志文件大小 -->
+    <!-- 不能采用相对路径 -->
     <property name="LOG_PATH" value="F:/SCS/ZJH/zju_-wjscsservice/logs"/>
+<!--    <property name="LOG_PATH" value="./logs"/>-->
 
     <!--控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

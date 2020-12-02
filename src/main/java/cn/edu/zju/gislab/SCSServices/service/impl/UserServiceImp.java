@@ -104,23 +104,24 @@ public class UserServiceImp implements UserService {
     @Override
     public List<ScsUsers> getAllUsers() {
         ScsUsersExample usersExample = new ScsUsersExample();
-        List<ScsUsers> userList = usersMapper.selectByExample(usersExample);
+        List<ScsUsers> userList = usersMapper.selectByExampleWithBLOBs(usersExample);
         return userList;
     }
 
     @Override
-    public int updateUser(String username, String password, int groupId) {
+    public int updateUser(String username, String password, int grants) {
         ScsUsers user = new ScsUsers();
         user.setUsername(username);
         user.setPassword(password);
-        user.setGroupId(groupId);
-        usersMapper.updateByPrimaryKey(user);
+        user.setGrants(grants);
+//        user.setGroupId(groupId);
+        usersMapper.updateByPrimaryKeyWithBLOBs(user);
 
         return 1;
     }
 
     @Override
-    public int addUser(String username, String password, int groupId) {
+    public int addUser(String username, String password, int grants) {
         ScsUsersExample usersExample = new ScsUsersExample();
         // 通过criteria构造查询条件
         ScsUsersExample.Criteria criteria = usersExample.createCriteria();
@@ -132,7 +133,8 @@ public class UserServiceImp implements UserService {
             ScsUsers user = new ScsUsers();
             user.setUsername(username);
             user.setPassword(password);
-            user.setGroupId(groupId);
+            user.setGrants(grants);
+            user.setGroupId(0);
             usersMapper.insert(user);
             return 1;
         }
