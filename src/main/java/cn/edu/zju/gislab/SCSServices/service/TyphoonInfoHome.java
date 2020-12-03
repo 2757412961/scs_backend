@@ -16,6 +16,10 @@ public interface TyphoonInfoHome {
 
     TyphInfo getTyphoonInfo(long typhNum);
 
+    List<String> getTyphTEPOTimes(String idx);
+
+    List<Tepo> getTyphTEPOTable(String idx, String stTime, int predictNum);
+
     // 台风预测中心数据
     List<TyphForecastWeb> getTyphForecastChinaJapan(long typhNum, String staTime);
 

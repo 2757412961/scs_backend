@@ -23,7 +23,7 @@ public class UtilCookie {
 
 
     public static Cookie createCookie(String key, String value) {
-        return createCookie(key, value, 3600);
+        return createCookie(key, value, 6 * 60 * 60);
     }
 
     public static Cookie getCookie(Cookie[] cookies, String name) {

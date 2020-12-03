@@ -140,6 +140,42 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
     }
 
     @Override
+    public List<String> getTyphTEPOTimes(String idx) {
+        List<String> results = new ArrayList<>();
+
+        List<Tepo> tepoList = tepoMapper.selectSingleStringList(
+                "SELECT DISTINCT ST_TIME FROM TEPO WHERE IDX = " + idx);
+        if (tepoList.remove(null) || tepoList.isEmpty()) {
+            return results;
+        }
+
+        for (Tepo tepo : tepoList) {
+            results.add(tepo.getStTime());
+        }
+
+        return results;
+    }
+
+    @Override
+    public List<Tepo> getTyphTEPOTable(String idx, String stTime, int predictNum) {
+        List<Tepo> results = new ArrayList<>();
+
+        TepoExample tepoExample = new TepoExample();
+        TepoExample.Criteria criteria = tepoExample.createCriteria();
+        criteria.andIdxEqualTo(idx);
+        criteria.andStTimeEqualTo(stTime);
+        criteria.andPredictNumEqualTo(predictNum);
+        List<Tepo> tepoList = tepoMapper.selectByExample(tepoExample);
+
+        if (tepoList.remove(null) || tepoList.isEmpty()) {
+            return results;
+        }
+        results = tepoList;
+
+        return results;
+    }
+
+    @Override
     public List<TyphForecastWeb> getTyphForecastChinaJapan(long typhNum, String staTime) {
         List<TyphForecastWeb> results = null;
 

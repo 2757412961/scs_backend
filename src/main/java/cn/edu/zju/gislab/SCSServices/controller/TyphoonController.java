@@ -58,6 +58,20 @@ public class TyphoonController {
         return result;
     }
 
+    // 获取 TEPO 特定年份 特定台风 的所有预报时间
+    @RequestMapping("/queryTyphTEPOTimes")
+    @ResponseBody
+    public List<String> queryTyphTEPOTimes(String idx) {
+        return typhoonInfoHome.getTyphTEPOTimes(idx);
+    }
+
+    // tepo 特定时间下的轨迹信息
+    @RequestMapping("/queryTyphTEPOTable")
+    @ResponseBody
+    public List<Tepo> queryTyphTEPOTable(String idx, String stTime, int predictNum) {
+        return typhoonInfoHome.getTyphTEPOTable(idx, stTime, predictNum);
+    }
+
     // 获取中国/日本 台风预测点
     @RequestMapping("/getTyphForecastChinaJapan")
     public @ResponseBody
