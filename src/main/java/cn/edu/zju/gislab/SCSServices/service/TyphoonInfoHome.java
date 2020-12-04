@@ -1,7 +1,9 @@
 package cn.edu.zju.gislab.SCSServices.service;
 
 import cn.edu.zju.gislab.SCSServices.po.*;
+import com.alibaba.fastjson.JSONObject;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface TyphoonInfoHome {
@@ -13,6 +15,8 @@ public interface TyphoonInfoHome {
     List<String> getTyphoonYears();
 
     List<TyphMonitorWeb> getTyphoonRoute(long typhNum);
+
+    JSONObject getTyphoonRouteTableClick(String typhNum, String routeTime) throws ParseException;
 
     TyphInfo getTyphoonInfo(long typhNum);
 

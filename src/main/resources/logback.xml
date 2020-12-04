@@ -88,7 +88,10 @@
         </filter>
     </appender>
 
-    <!--<logger name="java.sql.PreparedStatement" level="DEBUG" />-->
+    <!--jdbc -->
+    <logger name="java.sql.Connection" level="DEBUG" />
+    <logger name="java.sql.PreparedStatement" level="DEBUG" />
+    <logger name="cn.edu.zju.gislab.SCSServices.mapper" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

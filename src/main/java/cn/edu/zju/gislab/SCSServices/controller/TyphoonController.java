@@ -2,6 +2,7 @@ package cn.edu.zju.gislab.SCSServices.controller;
 
 import cn.edu.zju.gislab.SCSServices.po.*;
 import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -48,6 +50,13 @@ public class TyphoonController {
     List<TyphMonitorWeb> queryTyphoonRoute(long typhNum) {
         List<TyphMonitorWeb> result = typhoonInfoHome.getTyphoonRoute(typhNum);
         return result;
+    }
+
+    // 获取台风路径表格点击，所选择日期的台风信息
+    @RequestMapping("/typhoonRouteTableClick")
+    @ResponseBody
+    public JSONObject queryTyphoonRouteTableClick(String typhNum, String routeTime) throws ParseException {
+        return typhoonInfoHome.getTyphoonRouteTableClick(typhNum, routeTime);
     }
 
     // 获取特定年份的所有台风

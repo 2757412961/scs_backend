@@ -3,6 +3,8 @@ package cn.edu.zju.gislab.SCSServices.service.impl;
 import cn.edu.zju.gislab.SCSServices.mapper.*;
 import cn.edu.zju.gislab.SCSServices.po.*;
 import cn.edu.zju.gislab.SCSServices.service.TyphoonInfoHome;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -42,6 +44,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
             TyphInfoExample.Criteria criteria = typhInfoExample.createCriteria();
             criteria.andTyphNumBetween(Year * 100, Year * 100 + 100);
 
+            typhInfoExample.setOrderByClause("TYPH_NUM DESC");
             List<TyphInfo> typhInfoList = typhInfoMapper.selectByExample(typhInfoExample);
             if (typhInfoList != null && typhInfoList.size() > 0) {
                 result = typhInfoList;
@@ -84,6 +87,7 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
         List<String> result;
         try {
             TyphInfoExample typhInfoExample = new TyphInfoExample();
+            typhInfoExample.setOrderByClause("TYPH_NUM DESC");
             List<TyphInfo> typhInfoList = typhInfoMapper.selectByExample(typhInfoExample);
 
             if (typhInfoList.size() > 0) {
@@ -126,6 +130,37 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
     }
 
     @Override
+    public JSONObject getTyphoonRouteTableClick(String typhNum, String routeTime) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse(routeTime);
+        JSONObject jsonObject = new JSONObject();
+
+        TyphMonitorWebExample typhMonitorWebExample = new TyphMonitorWebExample();
+        TyphMonitorWebExample.Criteria criteria = typhMonitorWebExample.createCriteria();
+        criteria.andTyphNumEqualTo(Long.valueOf(typhNum));
+        criteria.andRouteTimeEqualTo(date);
+        List<TyphMonitorWeb> typhMonitorWebs = typhMonitorWebMapper.selectByExample(typhMonitorWebExample);
+        if (typhMonitorWebs.isEmpty()) {
+            return new JSONObject();
+        }
+        TyphMonitorWeb typhMonitorWeb = typhMonitorWebs.get(0);
+
+        TyphInfoExample typhInfoExample = new TyphInfoExample();
+        TyphInfoExample.Criteria criteriaInfo = typhInfoExample.createCriteria();
+        criteriaInfo.andTyphNumEqualTo(typhMonitorWeb.getTyphNum());
+        List<TyphInfo> typhInfos = typhInfoMapper.selectByExample(typhInfoExample);
+        if (typhInfos.isEmpty()) {
+            return new JSONObject();
+        }
+        TyphInfo typhInfo = typhInfos.get(0);
+
+        jsonObject.put("typhMonitorWeb", JSON.toJSON(typhMonitorWeb));
+        jsonObject.put("typhInfo", JSON.toJSON(typhInfo));
+
+        return jsonObject;
+    }
+
+    @Override
     public TyphInfo getTyphoonInfo(long typhNum) {
         TyphInfo result = null;
 
@@ -144,7 +179,10 @@ public class TyphoonInfoHomeImp implements TyphoonInfoHome {
         List<String> results = new ArrayList<>();
 
         List<Tepo> tepoList = tepoMapper.selectSingleStringList(
-                "SELECT DISTINCT ST_TIME FROM TEPO WHERE IDX = " + idx);
+                "SELECT DISTINCT ST_TIME " +
+                        " FROM TEPO " +
+                        " WHERE IDX = " + idx +
+                        " ORDER BY ST_TIME DESC");
         if (tepoList.remove(null) || tepoList.isEmpty()) {
             return results;
         }
