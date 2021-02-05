@@ -259,14 +259,14 @@ public class PredictionPaperServiceImp implements PredictionPaperService {
         }
         // 根据 year 和 month 检索 day
         if ("".equals(day)) {
-            String sqlStr = "select distinct DAY from Wlstybd WHERE ( YEAR = " + year + " and MONTH = " + month + " ) order by day ASC";
+            String sqlStr = "select distinct DAY from Wlstybd WHERE ( YEAR = '" + year + "' and MONTH = '" + month + "' ) order by day ASC";
             List<String> dayStrList = wlstybdMapper.selectSingleStringList(sqlStr);
             // 获取单独的海区预报 day List
             result.put("day", dayStrList); //添加year 集合
         }
         // 如果year month day都不为空,检索文件名
         if (!("".equals(day)) && null != day) {
-            String sqlStr = "select FILENAME from Wlstybd WHERE ( YEAR = " + year + " and MONTH = " + month + " and DAY = " + day + " )";
+            String sqlStr = "select FILENAME from Wlstybd WHERE ( YEAR = '" + year + "' and MONTH = '" + month + "' and DAY = '" + day + "' )";
             List<String> fileName = wlstybdMapper.selectSingleStringList(sqlStr);
             // 获取单独的海区预报 day List
             result.put("fileName", fileName); //添加year 集合
