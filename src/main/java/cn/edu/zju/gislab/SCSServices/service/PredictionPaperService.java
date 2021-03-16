@@ -28,11 +28,16 @@ public interface PredictionPaperService {
     public JSONObject getTropicsForecastConditon(String typhNum, String releaseNum, String releaseDate);
 
     /**
+     *  未来四周预报单：年、月、日
+     * @return
+     */
+    JSONObject getNext4WeeksForecastConditon(String year, String month, String day);
+
+    /**
      *  未来十天预报单：年、月、日
      * @return
      */
     public JSONObject getNextTenDaysForecastConditon(String year, String month, String day);
-
     /**
      *  海冰预报单：年、编号、周期
      * @return

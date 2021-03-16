@@ -44,6 +44,10 @@ public class PredictionPaperServiceImp implements PredictionPaperService {
     @Autowired
     private HbybdMapper hbybdMapper;
 
+    @Autowired
+    private ZcqybMapper zcqybMapper;
+
+
     /**
      * 海区预报单
      * 只有初始化的时候，yea、month、day、会同时为空
@@ -273,6 +277,50 @@ public class PredictionPaperServiceImp implements PredictionPaperService {
         }
         return result;
     }
+
+    /**
+     * 未来四周预报单
+     * 只有初始化的时候，yea、month、day、会同时为空
+     * 只有day不为空，才会查询fileName
+     * <p>
+     * 同时 为空，返回 {year:xx, month: xx , day: xx, ho ur:xx }
+     * year 不为空，返回 { month: xx , day: xx, hour:xx }
+     * year month 不为空，返回 {day : xx, hour:xx}
+     * year month day 不为空，返回 {fileName:xx}
+     */
+    @Override
+    public JSONObject getNext4WeeksForecastConditon(String year, String month, String day) {
+        // 如果year为空，检索所有年份
+        JSONObject result = new JSONObject();
+        if ("".equals(year)) {
+            String sqlStr = "select distinct YEAR from Zcqyb order by year ASC";
+            List<String> yearStrList = zcqybMapper.selectSingleStringList(sqlStr);
+            result.put("year", yearStrList); //添加year 集合
+            year = yearStrList.get(yearStrList.size() - 1); // 获取最新的一年
+        }
+        // 如果月也为空，就根据year检索 month
+        if ("".equals(month)) {
+            String sqlStr = "select distinct MONTH from Zcqyb WHERE ( YEAR = '" + year + "' ) order by month ASC";
+            List<String> monthStrList = zcqybMapper.selectSingleStringList(sqlStr);
+            result.put("month", monthStrList); //添加year 集合
+            month = monthStrList.get(monthStrList.size() - 1); // 获取最新的月份
+        }
+        // 根据 year 和 month 检索 day
+        if ("".equals(day)) {
+            String sqlStr = "select distinct DAY from Zcqyb WHERE ( YEAR = '" + year + "' and MONTH = '" + month + "' ) order by day ASC";
+            List<String> dayStrList = zcqybMapper.selectSingleStringList(sqlStr);
+            // 获取单独 day List
+            result.put("day", dayStrList); //添加year 集合
+        }
+        // 如果year month day都不为空,检索文件名
+        if (!("".equals(day)) && null != day) {
+            String sqlStr = "select FILENAME from Zcqyb WHERE ( YEAR = '" + year + "' and MONTH = '" + month + "' and DAY = '" + day + "' )";
+            List<String> fileName = zcqybMapper.selectSingleStringList(sqlStr);
+            result.put("fileName", fileName); //添加year 集合
+        }
+        return result;
+    }
+
 
     /**
      * 海冰预报单

@@ -117,6 +117,23 @@ public class PredictionPaperController {
     }
 
     /**
+     * 未来四周预报单
+     * 只有初始化的时候，year、month、day、会同时为空
+     * 只有day不为空，才会查询fileName
+     * <p>
+     * 同时 为空，返回 {year:xx, month: xx , day: xx, ho ur:xx }
+     * year 不为空，返回 { month: xx , day: xx, hour:xx }
+     * year month 不为空，返回 {day : xx, hour:xx}
+     * year month day 不为空，返回 {fileName:xx}
+     */
+    @RequestMapping("/getNext4WeeksPrediction")
+    @ResponseBody
+    public JSONObject getNext4WeeksPrediction(String year, String month, String day) {
+        JSONObject result = predictionPaperService.getNext4WeeksForecastConditon(year, month, day);
+        return result;
+    }
+
+    /**
      * 海冰预报单
      * 只有初始化的时候，yea、iceNum、iceNum、会同时为空
      * cycle不为空，才会查询fileName
